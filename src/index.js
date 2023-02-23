@@ -11,7 +11,7 @@ const firebaseConfig = {
 
 //initialize firebase
 firebase.initializeApp(firebaseConfig);
-
+//Getting a reference to the tables we want to store our data
 var bookingFormDB = firebase.database().ref('bookingForm');
 var menuserviceDB = firebase.database().ref('menuserviceForm');
 
@@ -20,6 +20,8 @@ var bookingalert = document.getElementById("bookingalert");
 
 document.getElementById('bookingForm').addEventListener('submit', submitForm);
 document.getElementById('menuserviceForm').addEventListener('submit', submitMenu);
+
+
 
 function submitForm(e) {
   e.preventDefault();
@@ -47,14 +49,28 @@ function submitForm(e) {
 }
 
 function getForm() {
-  var bookingFormDB = firebase.database().ref('bookingForm');
-  bookingFormDB.on('value', function(snapshot){
-    snapshot.forEach(function(element){
-      
-      console.log(element.val().name)
-    })
+  // Getting a reference to the data we want to display
+  var dataRef = firebase.database().ref('bookingForm');
   
-  })
+
+    //Listen for changes on data
+    dataRef.on('value', function(snapshot){
+
+      //Clear existing data
+      var dataEl = document.getElementById('data');
+      dataEl.innerHTML = '';
+    
+      //Loop through data and add it to the list
+      snapshot.forEach(function(childsnapshot){
+        var childData = childsnapshot.val();
+        var listItem = document.createElement('li');
+        listItem.innerText = childData.name + ':' + childData.value;
+        listItem.innerText = childData.phoneNo + ':' + childData.value;
+        listItem.innerText = childData.address + ':' + childData.value;
+        dataEl.appendChild(listItem);
+      })
+    
+    })
 }
 
 function getMenu() {
@@ -65,6 +81,7 @@ function getMenu() {
       console.log(element.val().food)
     })
   })
+
 }
 
 function submitMenu(e) {
