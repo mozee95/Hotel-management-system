@@ -63,22 +63,57 @@ function getForm() {
       //Loop through data and add it to the list
       snapshot.forEach(function(childsnapshot){
         var childData = childsnapshot.val();
-        var listItem = document.createElement('li');
-        listItem.innerText = childData.name + ':' + childData.value;
-        listItem.innerText = childData.phoneNo + ':' + childData.value;
-        listItem.innerText = childData.address + ':' + childData.value;
-        dataEl.appendChild(listItem);
+        
+        var properties = {
+          name: 'Name',
+          phoneNo: 'Phone Number',
+          address: 'Address',
+          checkIn: 'Check-In',
+          checkOut: 'Check-Out',
+          roomType: 'Room Type',
+          roomNo: 'Room Number',
+        };
+        
+        for (var property in properties){
+          var listItem = document.createElement('li');
+          listItem.innerText = properties[property] + ':' + childData[property];
+          dataEl.appendChild(listItem);
+        }
+       
       })
     
     })
 }
 
 function getMenu() {
-  var menuserviceDB = firebase.database().ref('menuserviceForm');
-  menuserviceDB.on('value', function(snapshot){
-    snapshot.forEach(function(element){
+  //Getting a reference for the data we want to display
+  var menuservice = firebase.database().ref('menuserviceForm');
 
-      console.log(element.val().food)
+  //Listen for changes on the data
+  menuservice.on('value', function(snapshot){
+
+    //clear existing data
+    var dataEl = document.getElementById('data');
+    dataEl.innerHTML = '';
+     
+    //Loop through data and add it to the list
+    snapshot.forEach(function(childsnapshot){
+      var childData = childsnapshot.val();
+
+      var properties= {
+        roomNo: 'Room Number',
+        food: 'Food',
+        foodPrice: 'Food Price',
+        drink: 'Drink',
+        drinkPrice: 'Drink Price',
+      };
+
+      for (var property in properties){
+        var listItem = document.createElement('li');
+        listItem.innerText = properties[property] + ':' + childData[property];
+        dataEl.appendChild(listItem);
+      }
+      
     })
   })
 
