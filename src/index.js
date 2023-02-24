@@ -169,6 +169,40 @@ const getElementVal = (id) => {
  return document.getElementById(id).value;
 };
 
+function loadTable(){
+  var bookingFormDB = firebase.database().ref('bookingForm');
+  //get a reference to the table element
+  var table = document.getElementById("myTable");
+  //clear existing table row
+  while (table.rowslength >1){
+    table.deleteRow(1);
+  }
+
+  //get data from database
+  var ref = firebase.database().ref("bookingForm");
+  ref.on("value", function(snapshot){
+    snapshot.forEach(function(childsnapshot){
+      var childData = childsnapshot.val();
+      // add row to the table
+      var row = table.insertRow(-1);
+      var nameCell = row.insertCell(0);
+      var phoneNumberCell = row.insertCell(1);
+      var addressCell = row.insertCell(2);
+      var checkInCell = row.insertCell(3);
+      var checkOutCell = row.insertCell(4);
+      var roomTypeCell = row.insertCell(5);
+      var roomNoCell = row.insertCell(6);
+      nameCell.innerHTML = childData.name;
+      phoneNumberCell.innerHTML = childData.phoneNumber;
+      addressCell.innerHTML = childData.address;
+      checkInCell.innerHTML = childData.checkIn;
+      checkOutCell.innerHTML = childData.checkOut;
+      roomTypeCell.innerHTML = childData.roomType;
+      roomNoCell.innerHTML = childData.roomNo;
+    })
+  })
+
+}
 
 
 

@@ -33,6 +33,8 @@ btn2.addEventListener("click", function(){
     booking.style.display= "block"
 })
 
+
+
 span.onclick = function(){
     modal.style.display = "none";
 }

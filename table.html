@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <title>Room records</title>
+        <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> 
+ <link rel = "stylesheet" type ="text/css" href = "layout/layout.css">
+    </head>
+
+    <body onload="loadTable()">        
+        <h1>Room Records</h1>
+        <table id ="myTable">
+            <tr>
+                <th>name</th>
+                <th>PhoneNumber</th>
+                <th>Address</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>RoomType</th>
+                <th>roomno</th>
+            </tr>
+        </table>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+        <script src="dist/menu.js" type = "text/javascript"></script>
+        <script src="src/index.js" type = "text/javascript"></script>
+    </body>
+
+</html>
