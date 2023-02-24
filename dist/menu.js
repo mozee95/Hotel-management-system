@@ -7,22 +7,31 @@ var btn3 = document.getElementById("btn3");
 var menuservice = document.getElementById("menuservice");
 
 
-function validateDate(){
-    let checkIn = new Date(document.getElementById("checkIn").value);
-    let checkOut = new Date(document.getElementById("checkOut").value);
-    
-    let today = new Date();
- 
-    if (checkIn < today){
-     alert("Check In date cannot be before today");
-     return false;
-    }
-    if(checkIn > checkOut){
-     alert("Check out date cannot be before check in date");
-     return false;
-    }
-    return true;
- }
+$(function() {
+    // initialize datepicker
+    $("#datepicker").datepicker({
+      minDate: 0, // set minimum selectable date to today
+      beforeShowDay: function(date) {
+        // disable dates before today
+        var today = new Date();
+        if (date == today) {
+          return [false, "disabled", "Unavailable"];
+        }
+        return [true, "", ""];
+      }
+    });
+    $("#datepickers").datepicker({
+        minDate: 0, // set minimum selectable date to today
+        beforeShowDay: function(date) {
+          // disable dates before today
+          var today = new Date();
+          if (date == today) {
+            return [false, "disabled", "Unavailable"];
+          }
+          return [true, "", ""];
+        }
+      });
+  });
 
 
 btn1.addEventListener("click", function(){

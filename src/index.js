@@ -29,8 +29,8 @@ function submitForm(e) {
   var name = getElementVal('name');
   var phoneNo = getElementVal('number');
   var address = getElementVal('address');
-  var checkIn = getElementVal('checkIn');
-  var checkOut = getElementVal('checkOut');
+  var checkIn = getElementVal('datepicker');
+  var checkOut = getElementVal('datepickers');
   var roomType = getElementVal('sel1');
   var roomNo = getElementVal('roomnumber');
   
@@ -186,14 +186,14 @@ function loadTable(){
       // add row to the table
       var row = table.insertRow(-1);
       var nameCell = row.insertCell(0);
-      var phoneNumberCell = row.insertCell(1);
+      var phoneNoCell = row.insertCell(1);
       var addressCell = row.insertCell(2);
       var checkInCell = row.insertCell(3);
       var checkOutCell = row.insertCell(4);
       var roomTypeCell = row.insertCell(5);
       var roomNoCell = row.insertCell(6);
       nameCell.innerHTML = childData.name;
-      phoneNumberCell.innerHTML = childData.phoneNumber;
+      phoneNoCell.innerHTML = childData.phoneNo;
       addressCell.innerHTML = childData.address;
       checkInCell.innerHTML = childData.checkIn;
       checkOutCell.innerHTML = childData.checkOut;
@@ -201,6 +201,42 @@ function loadTable(){
       roomNoCell.innerHTML = childData.roomNo;
     })
   })
+
+}
+
+function loadTables(){
+// Create a reference to the database
+var menuserviceDB = firebase.database().ref('menuserviceForm');
+
+//get a reference to the table element
+var table = document.getElementById('myTables');
+
+//Delete existing rows
+while(table.rowslength>1){
+  table.deleteRow(1)
+}
+
+//get data from database
+var ref = firebase.database().ref('menuserviceForm');
+
+ref.on('value', function(snapshot){
+    snapshot.forEach(function(childsnapshot){
+      var childData = childsnapshot.val();
+
+      //add row to the table
+      var row = table.insertRow(-1);
+      var roomNoCell = row.insertCell(0);
+      var foodCell = row.insertCell(1);
+      var foodPriceCell = row.insertCell(2);
+      var drinkCell = row.insertCell(3);
+      var drinkPriceCell = row.insertCell(4);
+      roomNoCell.innerHTML = childData.roomNo;
+      foodCell.innerHTML = childData.food;
+      foodPriceCell.innerHTML = childData.foodPrice;
+      drinkCell.innerHTML = childData.drink;
+      drinkPriceCell.innerHTML = childData.drinkPrice;
+    })
+})
 
 }
 
