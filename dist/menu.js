@@ -10,7 +10,7 @@ var menuservice = document.getElementById("menuservice");
 function validateDate(){
     let checkIn = new Date(document.getElementById("checkIn").value);
     let checkOut = new Date(document.getElementById("checkOut").value);
- 
+    
     let today = new Date();
  
     if (checkIn < today){
