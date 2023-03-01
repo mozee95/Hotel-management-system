@@ -1,0 +1,158 @@
+{
+  "bookingForm": {
+    "-NPIV4oXA2hwVRF9saMy": {
+      "address": "Balewa",
+      "checkIn": "02/27/2023",
+      "checkOut": "03/01/2023",
+      "name": "Aloyce Wadadu",
+      "phoneNo": "0764183832",
+      "roomNo": "110",
+      "roomPrice": "150000",
+      "roomType": "Deluxe King bed",
+      "totalBill": 300000
+    },
+    "-NPIVnJUiwXaVKYxt615": {
+      "address": "Sinza, Dar es salaam",
+      "checkIn": "02/27/2023",
+      "checkOut": "03/01/2023",
+      "name": "Dorcas Leskanga",
+      "phoneNo": "0765430551",
+      "roomNo": "110",
+      "roomPrice": "75000",
+      "roomType": "Executive Suites",
+      "totalBill": 150000
+    },
+    "-NPJ1IwgHeOzEFPvwwvF": {
+      "address": "Addis Ababa",
+      "checkIn": "02/27/2023",
+      "checkOut": "03/01/2023",
+      "name": "Baki Yahreb",
+      "phoneNo": "0705678890",
+      "roomNo": "125",
+      "roomPrice": "75000",
+      "roomType": "Deluxe King bed",
+      "totalBill": 150000
+    },
+    "-NPJasL4ZTnU8UtFb8GK": {
+      "address": "Sinza, Dar es salaam",
+      "checkIn": "02/28/2023",
+      "checkOut": "03/02/2023",
+      "name": "Saleh George",
+      "phoneNo": "0765430551",
+      "roomNo": "178",
+      "roomPrice": "150000",
+      "roomType": "V.I.P Suites",
+      "totalBill": 300000
+    },
+    "-NPLJ4We_gDCdjbOwyBE": {
+      "address": "Arusha",
+      "checkIn": "02/28/2023",
+      "checkOut": "03/02/2023",
+      "name": "Jason James",
+      "phoneNo": "0755 567788",
+      "roomNo": "131",
+      "roomPrice": "75000",
+      "roomType": "Executive Suites",
+      "totalBill": 150000
+    }
+  },
+  "customerBill": {
+    "110": {
+      "bookingID": "-NPIVnJUiwXaVKYxt615",
+      "totalBill": 161000
+    },
+    "125": {
+      "bookingID": "-NPJ1IwgHeOzEFPvwwvF",
+      "totalBill": 176000
+    },
+    "178": {
+      "bookingID": "-NPJasL4ZTnU8UtFb8GK",
+      "totalBill": 309000
+    }
+  },
+  "menuserviceForm": {
+    "-NPCjRR1R1bak7sapoyf": {
+      "drink": "Drostodyoff small",
+      "drinkPrice": "12000",
+      "food": "Fish makange and chips",
+      "foodPrice": "14000",
+      "roomNo": "125",
+      "totalPrice": 26000
+    },
+    "-NPCjZLUldx9Sgmw3HWe": {
+      "drink": "S.lager ",
+      "drinkPrice": "3000",
+      "food": "Wali roast",
+      "foodPrice": "4000",
+      "roomNo": "230",
+      "totalPrice": 7000
+    },
+    "-NPCklw6kwkuoTK-DB3i": {
+      "drink": "Pepsi",
+      "drinkPrice": "1000",
+      "food": "Chicken Burger",
+      "foodPrice": "8000",
+      "roomNo": "340",
+      "totalPrice": 9000
+    },
+    "-NPCmht2X9sLhFvPaywP": {
+      "drink": "S.lager ",
+      "drinkPrice": "3000",
+      "food": "Wali maharage",
+      "foodPrice": "3000",
+      "roomNo": "400",
+      "totalPrice": 6000
+    },
+    "-NPCmw7zAp53SK23H_mE": {
+      "drink": "Drostodyoff small",
+      "drinkPrice": "12000",
+      "food": "Chicken Makange",
+      "foodPrice": "12000",
+      "roomNo": "350",
+      "totalPrice": 24000
+    },
+    "-NPCpFIUl9qvvzyfT5RD": {
+      "drink": "Pepsi",
+      "drinkPrice": "1000",
+      "food": "Wali roast",
+      "foodPrice": "4000",
+      "roomNo": "324",
+      "totalPrice": 5000
+    },
+    "-NPGAiwGWafoBC8VN3BT": {
+      "drink": "S.lager ",
+      "drinkPrice": "3000",
+      "food": "Chips Kuku",
+      "foodPrice": "8000",
+      "roomNo": "105",
+      "totalPrice": 11000
+    },
+    "-NPID5atyGEbvn4yJLr0": {
+      "drink": "S.lager ",
+      "drinkPrice": "3000",
+      "food": "Fish makange and chips",
+      "foodPrice": "8000",
+      "roomNo": "110",
+      "totalPrice": 11000
+    },
+    "-NPJah-MVRN6aXQXu9rs": {
+      "drink": "Pepsi",
+      "drinkPrice": "1000",
+      "food": "Chips Kuku",
+      "foodPrice": "8000",
+      "roomNo": "178",
+      "totalPrice": 9000
+    },
+    "-NPLIu3VZv90puXYTzKS": {
+      "drink": "Drostodyoff small",
+      "drinkPrice": "20000",
+      "food": "Fish makange and chips",
+      "foodPrice": "14000",
+      "roomNo": "131"
+    }
+  },
+  "database": {
+    "rules": "database.rules.json",
+    "indexes": "firestore.indexes.json"
+  }
+}

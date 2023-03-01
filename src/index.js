@@ -33,8 +33,8 @@ function submitForm(e) {
   var checkOut = getElementVal('datepickers');
   var roomType = getElementVal('sel1');
   var roomNo = getElementVal('roomnumber');
-  
-  saveInformation(name, phoneNo, address, checkIn, checkOut, roomType, roomNo);
+  var roomPrice = getElementVal('roomprice');
+  saveInformation(name, phoneNo, address, checkIn, checkOut, roomType, roomNo, roomPrice);
   
   // Enable alert Message
   document.getElementById("bookingalert").style.display ="block";
@@ -152,7 +152,7 @@ const saveMenu =(roomNo, food, foodPrice, drink, drinkPrice) => {
   });
 };
 
-const saveInformation = (name, phoneNo, address, checkIn, checkOut, roomType, roomNo) =>{
+const saveInformation = (name, phoneNo, address, checkIn, checkOut, roomType, roomNo, roomPrice) =>{
    var newbookingForm = bookingFormDB.push();
    newbookingForm.set({
      name: name,
@@ -162,6 +162,7 @@ const saveInformation = (name, phoneNo, address, checkIn, checkOut, roomType, ro
      checkOut: checkOut,
      roomType: roomType,
      roomNo: roomNo,
+     roomPrice:roomPrice,
    });
 };
 
@@ -192,6 +193,7 @@ function loadTable(){
       var checkOutCell = row.insertCell(4);
       var roomTypeCell = row.insertCell(5);
       var roomNoCell = row.insertCell(6);
+      var roomPriceCell = row.insertCell(7);
       nameCell.innerHTML = childData.name;
       phoneNoCell.innerHTML = childData.phoneNo;
       addressCell.innerHTML = childData.address;
@@ -199,6 +201,7 @@ function loadTable(){
       checkOutCell.innerHTML = childData.checkOut;
       roomTypeCell.innerHTML = childData.roomType;
       roomNoCell.innerHTML = childData.roomNo;
+      roomPriceCell.innerHTML = childData.roomPrice;
     })
   })
 
@@ -230,17 +233,163 @@ ref.on('value', function(snapshot){
       var foodPriceCell = row.insertCell(2);
       var drinkCell = row.insertCell(3);
       var drinkPriceCell = row.insertCell(4);
+      var totalPriceCell = row.insertCell(5);
       roomNoCell.innerHTML = childData.roomNo;
       foodCell.innerHTML = childData.food;
       foodPriceCell.innerHTML = childData.foodPrice;
       drinkCell.innerHTML = childData.drink;
       drinkPriceCell.innerHTML = childData.drinkPrice;
+      totalPriceCell.innerHTML = childData.totalPrice;
     })
 })
 
 }
 
+function calculateSum(){
+   var database = firebase.database();
+   var  menuserviceRef = database.ref('menuserviceForm');
+
+   menuserviceRef.once('value').then(function(snapshot){
+    //creating an array of promises for all the update calls
+    var updatePromises = [];
+    //loop through each order in the snapshot
+    snapshot.forEach(function(childsnapshot){
+      
+      //Get the order data
+      var order = childsnapshot.val();
+      //Calculate total price
+     var foodPrice = parseInt(order.foodPrice);
+     var drinkPrice = parseInt(order.drinkPrice);
+     var totalPrice = (isNaN(foodPrice) ? 0 : foodPrice) + (isNaN(drinkPrice) ? 0 : drinkPrice);
+     console.log('Order ID:', childsnapshot.key, 'Total Price:', totalPrice);
+
+      if (!order.hasOwnProperty('totalPrice')) {
+        order.totalPrice = 0;
+     }
+      //update the order with the total price
+      var updates ={};
+      updates['/menuserviceForm/' + childsnapshot.key + '/totalPrice'] = totalPrice;
+      updatePromises.push(database.ref().update(updates));
+    });
+    return Promise.all(updatePromises);
+  }).then(function() {
+     console.log('All updates completed successfully!');
+  }).catch(function(error) {
+     console.error('An error occurred:', error);
+  });
+    
+   }
+
+   function calculateTotalBill(nodeKey){
+    return firebase.database().ref('bookingForm/' + nodeKey).once('value')
+    .then(snapshot => {
+      const booking = snapshot.val();
+      const checkIn = new Date (booking.checkIn);
+      const checkOut =  new Date (booking.checkOut);
+      const timeDiff = checkOut.getTime()- checkIn.getTime();
+      const daysDiff = Math.ceil(timeDiff/(1000*3600*24));
+      
+      //check if room price is a valid number
+      const roomPrice = parseInt(booking.roomPrice);
+      if (isNaN(roomPrice)) {
+        throw new Error('Invalid roomPrice: ' + booking.roomPrice);
+      }
+         const totalBill = roomPrice * daysDiff;
+         console.log(totalBill);
+         const updates = {};
+         updates ['bookingForm/' + nodeKey + '/totalBill'] = totalBill;
+         return firebase.database().ref().update(updates);
+         
+    })
+    
+        
+   }
+
+   function calculateRoomBill() {
+    
+   firebase.database().ref('bookingForm').once('value')
+   .then(snapshot => {
+     const promises =[];
+     snapshot.forEach(childsnapshot => {
+       const nodeKey = childsnapshot.key;
+       const promise = calculateTotalBill(nodeKey);
+       promises.push(promise);
+     });
+     return Promise.all(promises);
+   })
+   .then(() => console.log('Total bills calculated successfully'))
+   .catch(error => console.error(error));
 
 
- 
+   }
+
+  function calculateRoomCustomerBill(){
+      
+    const roomNo = document.getElementById('roomNum').value;
+
+    if(!roomNo){
+      alert('Please enter a room number');
+      return;
+    }
+
+      //Reference to the bookingForm mode
+      const bookingFormRef = firebase.database().ref('bookingForm');
+      //reference to the menuservice Form
+      const menuserviceFormRef = firebase.database().ref('menuserviceForm');
+      
+       //Find the corresponding booking form based on the roomno field
+     bookingFormRef.orderByChild('roomNo').equalTo(roomNo).once('value',(bookingSnapshot)=>{
+      //Initialize the total bill to 0
+      let totalBill = 0;
+      let bookingID;
+     
+      
+      bookingSnapshot.forEach((bookingChildSnapshot)=>{
+        const bookingForm = bookingChildSnapshot.val();
+        bookingID = bookingChildSnapshot.key;
+         
+        //check if the total bill field is defined and numeric
+        const bookingTotalBill = parseInt(bookingForm.totalBill);
+        
+        if(isNaN(bookingTotalBill)){
+          console.error('Total bill is not numeric')
+          return;
+        }
+
+          totalBill += bookingTotalBill;
+     })
+
+     //listen for changes on the menuservice form
+     menuserviceFormRef.orderByChild('roomNo').equalTo(roomNo).once('value', (menuserviceSnapshot)=>{
+      menuserviceSnapshot.forEach((menuserviceChildSnapshot)=>{
+        const menuserviceForm = menuserviceChildSnapshot.val();
+
+        //Check if the total price is defined and numeric
+        const totalPrice = parseInt(menuserviceForm.totalPrice);
+        if(isNaN(totalPrice)){
+          console.error('Total price is not numeric')
+          return;
+        }
+
+        totalBill += totalPrice;
+      })
+      const customerBillRef = firebase.database().ref('customerBill').child(roomNo);
+      customerBillRef.set({
+        totalBill: totalBill,
+        bookingID: bookingID,
+      })
+      const resultElem = document.getElementById('result');
+      resultElem.textContent = `The total bill for room ${roomNo} is $${totalBill}`;
+
+     })
+
+
+  }
+  
+)}
+  
+
+
+
+
 

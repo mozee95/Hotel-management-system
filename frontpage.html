@@ -18,7 +18,7 @@
              <button id="btn1">Huduma ya Chakula na Vinywaji</button>
             </div>
             <div class = "container p-5 my-5 border">
-                <button id="btn2">Booking</button>
+                <button id="btn2" >Booking</button>
              </div>
             <div id ="roomservice" class ="modal">
             <div class ="modal-content">
@@ -35,7 +35,7 @@
                     <label for= "name">Food</label>
                 </div>
                 <div class ="form-floating mb-3 mt-3">
-                    <input type="price" class="form-control" id = "foodprice" placeholder="Enter Food Price" name = "foodprice">
+                    <input type="number" class="form-control" id = "foodprice" placeholder="Enter Food Price" name = "foodprice">
                     <label for= "name">Food Price</label>
                 </div>
                 <div class ="form-floating mb-3 mt-3">
@@ -43,10 +43,10 @@
                     <label for= "name">Drink</label>
                 </div>
                 <div class ="form-floating mb-3 mt-3">
-                    <input type="text" class="form-control" id = "drinkprice" placeholder="Enter Drink Price" name = "drinkprice">
+                    <input type="number" class="form-control" id = "drinkprice" placeholder="Enter Drink Price" name = "drinkprice">
                     <label for= "name">Drink Price</label>
                 </div>
-                <button type = "submit" class = "btn btn-primary">Submit</button>
+                <button onclick="calculateSum()" type = "submit" class = "btn btn-primary">Submit</button>
             
             </form>
            </div>
@@ -78,8 +78,8 @@
                     <label for ="datepickers"></label>
                     <input type ="text" id="datepickers" placeholder="Enter checkOut">
                 </div>
-                
-                <label for="sel1" class="form-label">Select accomodation(select one):</label>
+                <div class = "form-floating mb-3">
+                <label for="sel1" class="form-label"></label>
                 <select class="form-select" id="sel1" name="sellist1" required>
                   <option>V.I.P Suites</option>
                   <option>Executive Suites</option>
@@ -87,13 +87,18 @@
                   <option>Deluxe Queen bed</option>
                   <option>Standard</option>
                 </select>
-
+                </div>
                 <div class ="form-floating mb-3">   
-                    <input type="roomno" class="form-control" id = "roomnumber" placeholder="Enter Room Numebr" name = "roomno" required>
+                    <input type="number" class="form-control" id = "roomnumber" placeholder="Enter Room Number" name = "roomno" required>
                     <label for= "roomno">Room Number</label>
                 </div>
+
+                <div class ="form-floating mb-3">   
+                    <input type="number" class="form-control" id = "roomprice" placeholder="Enter Room Price" name = "roomprice" required>
+                    <label for= "roomno">Room Price</label>
+                </div>
                 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button onclick="calculateRoomBill()" type="submit" class="btn btn-primary">Submit</button>
             </form> 
         </div>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
