@@ -1,10 +1,12 @@
-var btn1 = document.getElementById("btn1");
-var roomservice = document.getElementById("roomservice");
-var btn2 = document.getElementById("btn2");
-var booking = document.getElementById("booking");
+const btn1 = document.getElementById("btn1");
+// var roomservice = document.getElementById("roomservice");
+const btn2 = document.getElementById("btn2");
+// var booking = document.getElementById("booking");
 var span = document.getElementsByClassName("close")[0];
-var btn3 = document.getElementById("btn3");
-var menuservice = document.getElementById("menuservice");
+// var btn3 = document.getElementById("btn3");
+var menuservice = document.getElementById("roomservice");
+var modal = document.getElementById("booking");
+
 
 
 $(function() {
@@ -35,11 +37,11 @@ $(function() {
 
 
 btn1.addEventListener("click", function(){
-    roomservice.style.display= "block"
+  menuservice.style.display = "block";
 })
 
 btn2.addEventListener("click", function(){
-    booking.style.display= "block"
+   modal.style.display = "block";
 })
 
 

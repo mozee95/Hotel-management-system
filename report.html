@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Daily Sales Report</title>
+    </head>
+    <body>
+        <label for="date-input">Select a date:</label>
+        <input type="date" id="dateInput" name="date">
+        <button onclick="generateDailySalesReport(document.getElementById('dateInput').value)">Generate Report</button>
+        <div id="report"></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+        <script src="dist/menu.js" type = "text/javascript"></script>
+        <script src="src/index.js" type="module"></script>
+        <script src="src/index.js" nomodule></script>
+    </body>
+</html>

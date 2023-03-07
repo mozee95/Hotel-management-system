@@ -1,3 +1,4 @@
+// import { startOfDay, endOfDay, parse } from 'date-fns';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEp2LKZmc826gycNl9mu1OCuAlIPDoWLc",
@@ -11,6 +12,7 @@ const firebaseConfig = {
 
 //initialize firebase
 firebase.initializeApp(firebaseConfig);
+
 //Getting a reference to the tables we want to store our data
 var bookingFormDB = firebase.database().ref('bookingForm');
 var menuserviceDB = firebase.database().ref('menuserviceForm');
@@ -34,7 +36,8 @@ function submitForm(e) {
   var roomType = getElementVal('sel1');
   var roomNo = getElementVal('roomnumber');
   var roomPrice = getElementVal('roomprice');
-  saveInformation(name, phoneNo, address, checkIn, checkOut, roomType, roomNo, roomPrice);
+  const bookingTime = new Date().toLocaleString();
+  saveInformation(name, phoneNo, address, checkIn, checkOut, roomType, roomNo, roomPrice, bookingTime);
   
   // Enable alert Message
   document.getElementById("bookingalert").style.display ="block";
@@ -127,7 +130,9 @@ function submitMenu(e) {
   var drink = getElementVal('drink');
   var drinkPrice = getElementVal('drinkprice');
 
-  saveMenu(roomNo, food, foodPrice, drink, drinkPrice);
+  const orderTime = new Date().toLocaleString(); 
+
+  saveMenu(roomNo, food, foodPrice, drink, drinkPrice,orderTime);
   
   // Enable alert
   document.getElementById("menualert").style.display ="block";
@@ -142,6 +147,7 @@ function submitMenu(e) {
 }
 
 const saveMenu =(roomNo, food, foodPrice, drink, drinkPrice) => {
+  const orderTime = new Date().toLocaleString();
   var newmenuserviceForm = menuserviceDB.push();
   newmenuserviceForm.set({
       roomNo: roomNo,
@@ -149,10 +155,12 @@ const saveMenu =(roomNo, food, foodPrice, drink, drinkPrice) => {
       foodPrice: foodPrice,
       drink: drink,
       drinkPrice: drinkPrice,
+      orderTime: orderTime
   });
 };
 
 const saveInformation = (name, phoneNo, address, checkIn, checkOut, roomType, roomNo, roomPrice) =>{
+  const bookingTime = new Date().toLocaleString();
    var newbookingForm = bookingFormDB.push();
    newbookingForm.set({
      name: name,
@@ -163,6 +171,7 @@ const saveInformation = (name, phoneNo, address, checkIn, checkOut, roomType, ro
      roomType: roomType,
      roomNo: roomNo,
      roomPrice:roomPrice,
+     bookingTime:bookingTime,
    });
 };
 
@@ -327,6 +336,11 @@ function calculateSum(){
       
     const roomNo = document.getElementById('roomNum').value;
 
+    //Get the current date and time
+    const timestamp = new Date().toLocaleString();
+
+    
+
     if(!roomNo){
       alert('Please enter a room number');
       return;
@@ -336,6 +350,9 @@ function calculateSum(){
       const bookingFormRef = firebase.database().ref('bookingForm');
       //reference to the menuservice Form
       const menuserviceFormRef = firebase.database().ref('menuserviceForm');
+
+      //Initialize the data array
+      const data = [];
       
        //Find the corresponding booking form based on the roomno field
      bookingFormRef.orderByChild('roomNo').equalTo(roomNo).once('value',(bookingSnapshot)=>{
@@ -347,7 +364,16 @@ function calculateSum(){
       bookingSnapshot.forEach((bookingChildSnapshot)=>{
         const bookingForm = bookingChildSnapshot.val();
         bookingID = bookingChildSnapshot.key;
-         
+        const roomType = bookingForm.roomType;
+        const roomPrice = bookingForm.roomPrice;
+        const checkIn = new Date (bookingForm.checkIn);
+        const checkOut =  new Date (bookingForm.checkOut);
+        
+      const timeDiff = checkOut.getTime()- checkIn.getTime();
+      const numDays = Math.ceil(timeDiff/(1000*3600*24));
+
+        data.push({roomType:roomType, roomPrice:roomPrice, numDays:numDays})
+                 
         //check if the total bill field is defined and numeric
         const bookingTotalBill = parseInt(bookingForm.totalBill);
         
@@ -363,6 +389,11 @@ function calculateSum(){
      menuserviceFormRef.orderByChild('roomNo').equalTo(roomNo).once('value', (menuserviceSnapshot)=>{
       menuserviceSnapshot.forEach((menuserviceChildSnapshot)=>{
         const menuserviceForm = menuserviceChildSnapshot.val();
+        const food = menuserviceForm.food;
+        const foodPrice = menuserviceForm.foodPrice;
+        const drink = menuserviceForm.drink;
+        const drinkPrice = menuserviceForm.drinkPrice;
+        data.push({food:food, foodPrice:foodPrice, drink:drink, drinkPrice:drinkPrice})
 
         //Check if the total price is defined and numeric
         const totalPrice = parseInt(menuserviceForm.totalPrice);
@@ -375,11 +406,30 @@ function calculateSum(){
       })
       const customerBillRef = firebase.database().ref('customerBill').child(roomNo);
       customerBillRef.set({
+        roomType: data[0].roomType,
+        roomPrice: data[0].roomPrice,
+        numDays: data[0].numDays,
+        products: data.slice(2),
         totalBill: totalBill,
         bookingID: bookingID,
       })
       const resultElem = document.getElementById('result');
-      resultElem.textContent = `The total bill for room ${roomNo} is $${totalBill}`;
+      resultElem.innerHTML = `<h2>Hotel Ristalem </h2>`
+      resultElem.innerHTML += `<h3>Invoice for Room ${roomNo}</h3>`;
+      resultElem.innerHTML +=  `<p>Date and Time: ${timestamp} </p>`
+      resultElem.innerHTML += `<p>Room Type: ${data[0].roomType}</p>`;
+      resultElem.innerHTML += `<p>Room Price: ${data[0].roomPrice}</p>`;
+      resultElem.innerHTML += `<p>Days Occupied: ${data[0].numDays}</p>`;
+      resultElem.innerHTML += '<ul>';
+      for(let i=1; i<data.length; i++) {
+        const food = data[i].food;
+        const foodPrice = data[i].foodPrice;
+        const drink = data[i].drink;
+        const drinkPrice = data[i].drinkPrice;
+        resultElem.innerHTML += `<li>Food: ${food}<br> Food Price: ${foodPrice}<br> Drink: ${drink}<br> Drink Price: ${drinkPrice} </li> `;
+      }
+      resultElem.innerHTML += '</ul>';
+      resultElem.innerHTML += `<p>Total Bill: ${totalBill}</p>`;
 
      })
 
@@ -387,6 +437,68 @@ function calculateSum(){
   }
   
 )}
+
+function generateDailySalesReport(date) {
+  
+   const dbRef = firebase.database().ref();
+   const roomSalesRef = dbRef.child("bookingForm");
+   const restaurantSalesRef = dbRef.child("menuserviceForm");
+   
+   const selectedDate = date;
+   const startDate = startOfDay(parse(selectedDate, "yyyy-MM-dd", new Date()));
+   const startTimeStamp = startDate.getTime();
+ 
+   const endDate = endOfDay(parse(selectedDate, "yyyy-MM-dd", new Date()));
+   const endTimeStamp = endDate.getTime();
+   //Pass the selected date string and format it
+ 
+ 
+   let totalRoomSales = 0;
+   let totalRestaurantSales = 0;
+  
+    console.log(startTimeStamp);
+   //Retrieve room sales data for the given day
+   roomSalesRef.orderByChild("bookingTime").startAt(startTimeStamp).endAt(endTimeStamp)
+    .once("value", function(snapshot){
+      snapshot.forEach(function(childsnapshot){
+        const roomSale = childsnapshot.val();
+        const roomPrice = parseInt(roomSale.roomPrice);
+        const totalBill = parseInt(roomSale.totalBill);
+
+        if(isNan(roomPrice)|| isNaN(totalBill)){
+          console.error(`Invalid room sale data for booking ID ${childSnapshot.key}`);
+          return;
+        }
+        totalRoomSales += roomPrice;
+
+      })
+
+      //Retrieve restaurant sales data for the given day
+      restaurantSalesRef.orderByChild("orderTime").startAt(startTimeStamp).endAt(endTimeStamp)
+      .once("value", function(snapshot){
+        snapshot.forEach(function(childSnapshot){
+          const restaurantSale = childSnapshot.val();
+          const totalPrice = parseInt(restaurantSale.totalPrice);
+          if (isNaN(totalPrice)) {
+            console.error(`Invalid restaurant sale data for order ID ${childSnapshot.key}`);
+            return;
+          }
+          totalRestaurantSales += totalPrice;
+        })
+
+        //Generate the HTML report
+        const reportElem = document.getElementById("report");
+        reportElem.innerHTML = `<h2>Daily Sales Report </h2>`;
+        reportElem.innerHTML += `<p>Date: ${selectedDate} </p>`;
+        reportElem.innerHTML += `<p>Room Sales: ${totalRoomSales} TZS</p>`;
+        reportElem.innerHTML += `<p>Restaurant Sales: ${totalRestaurantSales} TZS</p>`;
+        reportElem.innerHTML += `<p>Total Sales: ${totalRoomSales + totalRestaurantSales} TZS</p>`;
+      })
+    })
+
+  }
+
+
   
 
 
